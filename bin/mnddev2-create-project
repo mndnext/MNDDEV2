@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+# create new default dev project structure
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+cp -ri $(getTemplateDir)/* .

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+
+# wrapper for ssh to make sure localhost is not checked against known_hosts file
+# to prevent warnings if docker container has changed
+
+function echoUsageInfo {
+
+	echo
+	echo "usage: dw-ssh [-p port] [user]@[host]"
+	echo
+	echoCHead
+	echo
+	echo "change environment variables \$DW-SSH_DEFAULT_CONNECTION_STRING and \$DW-SSH_DEFAULT_SSH_PORT to change defaults."
+  echo
+	exit 1
+
+}
+
+function echoCHead {
+	echo "dw-ssh - SSH login helper for dockware - (c) 2020 MND Next GmbH"
+
+}
+
+function runSSH {
+
+	echoCHead
+	echo "Logging into $2 via port $1"
+  ${SSH_COMMAND} -p $1 $2
+
+}
+
+
+
+# hande default environment variables
+if [ -z "${DW_SSH_DEFAULT_SSH_COMMAND}" ]; then
+  SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
+else
+  SSH_COMMAND="${DW_SSH_DEFAULT_SSH_COMMAND}";
+fi
+
+if [ -z "${DW_SSH_DEFAULT_CONNECTION_STRING}" ]; then
+  SSH_CONN_STRING="dockware@localhost";
+else
+  SSH_CONN_STRING="${DW_SSH_DEFAULT_CONNECTION_STRING}";
+fi
+
+if [ -z "${DW_SSH_DEFAULT_SSH_PORT}" ]; then
+  SSH_PORT=22;
+else
+  SSH_PORT="${DW_SSH_DEFAULT_SSH_PORT}";
+fi
+
+# handle options
+while getopts p: option
+do
+	case "$option" in
+		p) SSH_PORT="$OPTARG" ;;
+		[?]) echoUsageInfo ;;
+	esac
+done
+
+
+# catch argument after options into $1
+
+shift $(($OPTIND-1))
+
+if [ ! -z ${1+x} ]; then
+	SSH_CONN_STRING=$1;
+fi
+
+
+# run ssh
+
+runSSH $SSH_PORT $SSH_CONN_STRING;

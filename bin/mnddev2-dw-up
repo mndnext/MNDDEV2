@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+# start dockware environment with project data
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+checkProjectDir
+
+docker-compose up -d

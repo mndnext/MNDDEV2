@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+# makes database backup in dockware environment
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+loadProjectEnv
+
+TIMESTAMP=$(getDateTimeStringSeconds)
+TARGET_DIR="/autodump/$TIMESTAMP"
+LOCAL_TARGET_DIR=$(getProjectDir)/db/autodump-$TIMESTAMP
+
+
+# dump all databases
+echo "dumping all databases"
+echo "notice: you can ignore insecure password warnings from mysql/mysqldump"
+
+docker cp $(getMNDDEVDir)/bin/remote/dump-all-databases.sh $PROJECTNAME:/usr/local/bin
+
+docker exec -u root -i $PROJECTNAME bash -l -c "/usr/local/bin/dump-all-databases.sh $TARGET_DIR root root"
+
+docker cp $PROJECTNAME:$TARGET_DIR $LOCAL_TARGET_DIR
+
+echo "...done"

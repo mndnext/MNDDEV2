@@ -1,0 +1,14 @@
+# default git config for use in windows / wsl2 environment
+# should work on mac as well
+# should be placed in ~/.gitconfig as well as in windows %USERHOME%\.gitconfig
+
+[core]
+        autocrlf = input
+        eol = lf
+        filemode = false
+        quotepath = off
+        longpaths = true
+	      safecrlf = false
+[user]
+        email = xxxx@mndnext.de
+        name = XXXXVorname NachnameXXXX

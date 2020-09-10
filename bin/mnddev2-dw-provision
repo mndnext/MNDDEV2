@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+# provisions dockware environment with project data
+
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+loadProjectEnv
+
+checkProjectDir
+
+#### Option Handling ####
+
+showHelp() {
+cat << EOF
+Usage: ./mnddev2-dw-provision [-b|--bind-mode]
+
+-h, -help,          --help                  Display help
+
+-b, --bind-mode  run provisioning compatible for docker bind mount. E.g. do not copy projekct files with docker cp only database.
+
+EOF
+}
+
+
+export bindmode=0
+
+# $@ is all command line parameters passed to the script.
+# -o is for short options like -v
+# -l is for long options with double dash like --version
+# the comma separates different long options
+# -a is for long options with single dash like -version
+options=$(getopt -l "help,bind-mode" -o "hb")
+
+while true
+do
+case $1 in
+-h|--help)
+    showHelp
+    exit 0
+    ;;
+-b|--bind-mode)
+    export bindmode=1
+    break
+    ;;
+esac
+done
+
+
+#### End Option Handling ####
+
+
+
+if [ $bindmode = 0 ]; then
+  # copy project files to container
+  if [[ -n $SWVERSION && $SWVERSION -gt 5 ]]; then
+      echo "copying files to container"
+      docker cp src/. $PROJECTNAME:/var/www/html/
+      echo "...done"
+  else
+      echo "copying files to container"
+      docker cp src/. $PROJECTNAME:/var/www/html/public
+      echo "...done"
+  fi
+fi
+# remove database first
+echo "remove existing database mnddev"
+docker exec -i $PROJECTNAME bash -l -c "export MYSQL_PWD=root; cat /db/remove_db.sql | mysql -uroot"
+echo "...done"
+
+# create / import database
+echo "creating database mnddev"
+docker exec -i $PROJECTNAME bash -l -c "export MYSQL_PWD=root; cat /db/create_db.sql | mysql -uroot"
+echo "...done"
+
+# import db
+echo "importing project db"
+docker exec -i $PROJECTNAME bash -l -c 'export MYSQL_PWD=root; mysql -uroot --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" mnddev < /db/'$PROJECTNAME'.sql'
+echo "...done"
+
+echo "setting global permissions"
+if [ $bindmode = 1 ]; then
+	  docker exec -i $PROJECTNAME bash -l -c "sudo chgrp -R www-data /var/www/html/"
+	  docker exec -i $PROJECTNAME bash -l -c "sudo chmod -R ug+rw,o-rwx /var/www/html/"
+	  # set owner for jwt directory and *.pem leve out any other since they
+	  # might need to writeable for IDE or git
+	  docker exec -i $PROJECTNAME bash -l -c "sudo chown www-data.www-data /var/www/html/config/jwt/"
+	  docker exec -i $PROJECTNAME bash -l -c "sudo chown www-data.www-data /var/www/html/config/jwt/*.pem"
+else
+	  docker exec -i $PROJECTNAME bash -l -c "sudo chown -R www-data.www-data /var/www/html/"
+fi
+echo "...done"
+
+##### SW 6 Commands #####
+if [[ -n $SWVERSION && $SWVERSION -gt 5 ]]; then
+
+    # change rights to jwt/config files
+    echo "setting permissions"
+    docker exec -i $PROJECTNAME bash -l -c "sudo chmod -R 755 /var/www/html/config/jwt/"
+    docker exec -i $PROJECTNAME bash -l -c "sudo chmod 600 /var/www/html/config/jwt/*"
+    echo "...done"
+
+    # run build-js.sh / compile theme / clear cache
+    echo "running build script"
+    docker exec -i $PROJECTNAME bash -l -c "/var/www/html/bin/build-js.sh"
+    echo "...done"
+
+    echo "compiling theme"
+    docker exec -i $PROJECTNAME bash -l -c "/var/www/html/bin/console theme:compile"
+    echo "...done"
+
+    echo "clearing the cache"
+    docker exec -i $PROJECTNAME bash -l -c "/var/www/html/bin/console cache:clear"
+    echo "...done"
+
+fi
+
+# copy my ssh public key to ~/.ssh/authorized_keys in container

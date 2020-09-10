@@ -1,0 +1,38 @@
+version: "3.4"
+ 
+services:
+         
+    shopware:
+      image: dockware/essentials:latest
+      container_name: ${PROJECTNAME}
+      ports:
+         - "80:80"
+         - "443:443"
+         - "3306:3306"
+         - "22:22"
+         - "8888:8888"
+         - "9999:9999"
+      networks:
+         - web
+      volumes:
+         - "db_volume:/var/lib/mysql"
+         - "shop_volume:/var/www/html" # comment this for bind mount
+         #- "./src/:/var/www/html/" # use this for bind mount. When using bind mount we recooment "storage-driver": "overlay2" in your docker config for wsl2
+         - "./db/:/db/"
+      environment:
+         - XDEBUG_ENABLED=1
+         - PHP_VERSION=7.4
+
+volumes:
+  db_volume:
+    driver: local
+    name: ${PROJECTNAME}_db_volume
+  # comment this when using bind mount START
+  shop_volume:
+    driver: local
+    name: ${PROJECTNAME}_shop_volume
+  # comment this when using bind mount END
+
+networks:
+  web:
+    external: false

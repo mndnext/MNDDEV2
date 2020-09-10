@@ -1,0 +1,127 @@
+###################
+#
+# gitignore defaults für MNDDEV Environment
+# Shopware 5
+# (c) 2015+ MND Next GmbH - www.mndnext.de
+#
+##################
+
+### MNDDEV Standards ###
+
+# os files
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+._*
+
+# SVN
+.svn/
+
+### PHPStorm standards ###
+# Quelle https://www.gitignore.io/api/phpstorm
+
+/.idea/
+
+# docker compose
+docker-compose.override.yml
+
+# User-specific stuff:
+#.idea/workspace.xml
+#.idea/tasks.xml
+#.idea/dictionaries
+
+# Sensitive or high-churn files:
+# .idea/dataSources.ids
+# .idea/dataSources.xml
+# .idea/sqlDataSources.xml
+# .idea/dynamic.xml
+# .idea/uiDesigner.xml
+
+# Gradle:
+# .idea/gradle.xml
+# .idea/libraries
+
+# Mongo Explorer plugin:
+# .idea/mongoSettings.xml
+######
+
+
+### Shopware standards ###
+# /** blacklistet ALLES unterhalb dem Verzeichnis
+# !...**/ whitlistet alle verzeichnisse unterhalb
+# ansonsten greifen keine regeln für z.B. gitkeep mehr,
+# da unterverzeichnisse komplett ausgeschlossen werden
+
+/src/cache/**
+!/src/cache/**/
+!/src/cache/clear_cache.sh
+/src/logs/**
+!/src/logs/**/
+/src/files/**
+!/src/files/**/
+/src/media/archive/**
+!/src/media/archive/**/
+/src/media/music/**
+!/src/media/music/**/
+/src/media/pdf/**
+!/src/media/pdf/**/
+/src/media/temp/**
+!/src/media/temp/**/
+/src/media/unknown/**
+!/src/media/unknown/**/
+/src/media/video/**
+!/src/media/video/**/
+/src/media/vector/**
+!/src/media/vector/**/
+# bei media/image wirklich alle unterverzeichnisse ausshließen
+# insbes. wegen neuer mediastruktur in sw5
+/src/media/image/**
+!/src/media/image/logo.png
+
+# SW5
+/src/web/cache/**
+!/src/web/cache/**/
+/src/var/cache/**
+!/src/var/cache/clear_cache.sh
+/src/var/log/**
+!/src/var/log/**/
+/src/web/sitemap/**
+!/src/web/sitemap/**/
+
+
+# node modules nicht versionieren. dies passiert, wenn man grunt ausversehen im theme verzeichnis installiert
+# und nicht mit npm -g install xxxx
+/src/themes/node_modules/**
+!/src/themes/node_modules/**/
+
+
+# Falls image Verzeichnis Relevant, thumbnails ausschließen
+#src/media/image/thumbnail/cimage_*
+#src/media/image/thumbnail/image_*
+#src/media/image/cimage_*
+#src/media/image/image_*
+
+/src/config.local.php
+
+######
+
+####################################################################################################################
+### projektspezifische Anpassungen hier hinzufügen ###
+
+
+
+
+
+
+# Nach dieser Markierung keine projektspezifischen Anpassungen mehr hinzufügen!
+####################################################################################################################
+
+### git overrides ##
+
+!.gitkeep
+!.htaccess
+
+#######

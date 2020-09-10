@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS mnddev COLLATE = 'utf8mb4_unicode_ci' CHARACTER SET = 'utf8mb4';

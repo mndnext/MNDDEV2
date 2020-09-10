@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2021 MND Next GmbH
+# default tasks for stopping dockware environment
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+loadProjectEnv
+checkProjectDir
+
+$(getMNDDEVDir)/bin/mnddev2-dw-dump
+
+echo "stopping docker image $PROJECTNAME"
+
+docker stop $PROJECTNAME
+
+echo "...done"

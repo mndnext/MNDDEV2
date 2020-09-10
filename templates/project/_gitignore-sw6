@@ -1,0 +1,99 @@
+###################
+#
+# gitignore defaults for MNDDEV Environemnt
+# Shopware 6
+# (c) 2015+ MND Next GmbH - www.mndnext.de
+#
+##################
+
+### MNDDEV Standards ###
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+./Icon?
+ehthumbs.db
+Thumbs.db
+# SASS/SCSS cache
+.sass-cache/
+
+# SVN
+.svn/
+
+# PhpStorm-Project
+/.idea/
+
+# Composer
+/src/composer.phar
+#/src/vendor/**
+#!/src/vendor/**/
+/src/composer.lock
+
+# Caches/Proxies
+.php_cs
+.php_cs.cache
+/src/var/**
+!/src/var/**/
+/src/var/bootstrap.php.cache
+/src/var/config_administration_plugins.json
+/src/var/jwt/public.pem
+/src/var/jwt/private.pem
+
+/src/public/css/**
+!/src/public/css/**/
+/src/public/js/**
+!/src/public/js/**/
+/src/public/media/**
+!/src/public/media/**/
+#src/Administration/Resources/public/static/
+
+# Snippet exports
+#/src/snippetsExport/
+
+# Log files
+/src/var/logs/**
+!/src/var/logs/**/
+/src/var/log/**
+!/src/var/log/**/
+npm-debug.log
+
+# tooling
+docker-compose.override.yml
+/src/src/Docs/**/dist
+phpstan.neon
+
+# tests / ci
+/build/
+!build/artifacts/.gitkeep
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+###< phpunit/phpunit ###
+
+######
+
+####################################################################################################################
+### projektspezifische Anpassungen hier hinzufügen ###
+
+
+
+
+
+
+# Nach dieser Markierung keine projektspezifischen Anpassungen mehr hinzufügen!
+####################################################################################################################
+
+### git overrides ##
+
+!.gitkeep
+!.htaccess
+
+#######
