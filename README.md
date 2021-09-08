@@ -25,12 +25,12 @@ or have questions, please create an issue on github. Or even better: provide a p
 * check what /install.sh does and if you are happy with it, run it in your home directory.
   
 ### Project Setup
-* Create your first project structure by: cd /DEV && mnddev2-crate-project
-* a directory called "project" will be created. It's a copy of the templates/project directory for now
-* cd to your project directory and do a: git init && git add . && git commit -m "mnddev2 rocks"
+* Create your first project structure by: ``cd /DEV && mnddev2-crate-project``
+* a directory called "project" will be created. It's a copy of the templates/project directory for now. You can rename it as you like, e.g. 'MyAwesomShopwareShop'.
+* cd to your project directory and do a: ``git init && git add . && git commit -m "mnddev2 rocks"``
 * customize the config files in your project.
     * Choose one of the _gitignore templates as your .gitignore
-    * edit the .env file according to your needs. Comments there should be self explanatory.
+    * edit the .env file according to your needs. Comments there should be self explanatory. Having said that: beware that the mnddev2-dw commands are aware of the variable SWVERSION.
     * when setting up the docker-compose file you can choose between creating a dedicated docker volume for your codebase or using bind mount. When using bind mount provide the -b parameter to the mnddev2-dw-provision command. See below
     * of course you can use a docker-compose.override for your local needs. It is ignored in our default .gitignore
     * Change your Shopware Database credentials to use those provided in your project .env
@@ -44,7 +44,7 @@ use this in your project folder to connect to your project container
 This launches your dockware container.
 
 #### mnddev2-dw-provision
-This provisions your dockware container with your project data and runs some basic setup actions
+This provisions your dockware container with your project data and runs some basic setup actions. Without arguments this command does a docker cp of your src directory to /var/www/html inside the dockware container. When using a bind mount to src use ``mnddev2-dew-provision -b`` to skip this copy step.
 
 #### mnddev2-dw-dump
 Dumps your running database to /db/autodump-TIME/
