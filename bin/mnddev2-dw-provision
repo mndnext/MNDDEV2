@@ -33,8 +33,6 @@ export bindmode=0
 # -a is for long options with single dash like -version
 options=$(getopt -l "help,bind-mode" -o "hb")
 
-while true
-do
 case $1 in
 -h|--help)
     showHelp
@@ -42,10 +40,8 @@ case $1 in
     ;;
 -b|--bind-mode)
     export bindmode=1
-    break
     ;;
 esac
-done
 
 
 #### End Option Handling ####
