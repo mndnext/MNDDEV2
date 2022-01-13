@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# (c) 2021 MND Next GmbH
+# make clean db volume for dockware environment with project data
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+checkProjectDir
+
+loadProjectEnv
+
+
+# stop container if running
+docker-compose down
+
+echo "delete db volume"
+docker volume rm ${PROJECTNAME}_db_volume
+
+echo "start container"
+docker-compose up -d
+
+echo "wait 10 seconds"
+sleep 10s
+
+# remove database first
+echo "remove existing database mnddev"
+docker exec -i $PROJECTNAME bash -l -c "export MYSQL_PWD=root; cat /db/remove_db.sql | mysql -uroot"
+
+# create / import database
+echo "creating database mnddev"
+docker exec -i $PROJECTNAME bash -l -c "export MYSQL_PWD=root; cat /db/create_db.sql | mysql -uroot"
+
+# import db
+echo "importing project db"
+docker exec -i $PROJECTNAME bash -l -c 'export MYSQL_PWD=root; mysql -uroot --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" mnddev < /db/'$PROJECTNAME'.sql'
+echo "...done"
