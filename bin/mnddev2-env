@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+# (c) 2020-2022 MND Next GmbH
+# prepares or sets multiple environments for a project
+
+set -e
+
+source $(dirname "$0")/../includes/bash-common.inc.sh
+
+showHelp() {
+cat << EOF
+Usage: ./mnddev2-dw-env command
+
+Available commands:
+init                will create a multiple environment folder and file structure.
+                    This will create a "env" folder in your root project where you can then create
+                    subfolders named after each environment (eg. staging, dev, test, etc..)
+                    In these folders you can copy files that will be copied to the root folder once
+                    the environment was activated.
+
+-h, --help          Display help
+
+EOF
+}
+
+initEnv() {
+
+
+cat << EOF
+*** WARNING ***
+If you continue, a new folder called "env" will be created in your project.
+This directory should be created in the ROOT folder of your project, eg: root folder of shopware.
+If you are not in the correct folder, you should stop now. Otherwise continue.
+
+EOF
+
+read -p "Continue (y/n)?" CONT
+if [ "$CONT" != "y" ]; then
+    echo "Aborting"
+    exit 0;
+fi
+
+#copy all stuff from templates to the current directory
+#echo "The script you are running has basename $( basename -- "$0"; ), dirname $( dirname -- "$0"; )";
+template_dir=$( dirname -- "$0" )/../templates/env
+
+#check if env directory lready exists:
+
+if [ -d env ]; then
+    echo "ERROR: env directory already exists"
+    exit 4;
+fi
+
+if [ ! -d $template_dir ]; then
+    echo "ERROR: template directory does not exist"
+    exit 4;
+fi
+
+
+cp $template_dir . -rf
+mkdir -p env/dev/files
+
+echo "Done!"
+echo "Next: You should now copy all needed files for each environments in the corresponding env/<envname>/files directory."
+echo "For example .env or config.php files. You can also copy files from sub folders."
+
+}
+
+
+##############################################################################################
+# $@ is all command line parameters passed to the script.
+# -o is for short options like -v
+# -l is for long options with double dash like --version
+# the comma separates different long options
+# -a is for long options with single dash like -version
+options=$(getopt -l "help" -o "h")
+
+case $1 in
+-h|--help)
+    showHelp
+    exit 0
+    ;;
+esac
+
+# handle non-option arguments
+if [[ $# -ne 1 ]]; then
+    echo "a command is required. Run this command with --help to see available commands"
+    exit 4
+fi
+
+if [ ${1,,} = "init" ]; then
+    initEnv
+    exit 0
+fi
+
+echo "Command not recognized."
+exit 4
