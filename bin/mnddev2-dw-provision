@@ -79,7 +79,7 @@ echo "setting global permissions"
 if [ $bindmode = 1 ]; then
 	  docker exec -i $PROJECTNAME bash -l -c "sudo chgrp -R www-data /var/www/html/"
 	  docker exec -i $PROJECTNAME bash -l -c "sudo chmod -R ug+rw,o-rwx /var/www/html/"
-	  # set owner for jwt directory and *.pem leve out any other since they
+	  # generate jwt and set owner for jwt directory and *.pem leve out any other since they
 	  # might need to writeable for IDE or git
 	  docker exec -i $PROJECTNAME bash -l -c "sudo chown www-data.www-data /var/www/html/config/jwt/"
 	  docker exec -i $PROJECTNAME bash -l -c "sudo chown www-data.www-data /var/www/html/config/jwt/*.pem"
@@ -91,8 +91,9 @@ echo "...done"
 ##### SW 6 Commands #####
 if [[ -n $SWVERSION && $SWVERSION -gt 5 ]]; then
 
-    # change rights to jwt/config files
-    echo "setting permissions"
+    # generate jwt and change rights to jwt/config files
+    echo "generate jwt and set permissions"
+    docker exec -i $PROJECTNAME bash -l -c "/var/www/html/bin/console system:generate-jwt-secret"
     docker exec -i $PROJECTNAME bash -l -c "sudo chmod -R 755 /var/www/html/config/jwt/"
     docker exec -i $PROJECTNAME bash -l -c "sudo chmod 600 /var/www/html/config/jwt/*"
     echo "...done"
