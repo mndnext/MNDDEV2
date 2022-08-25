@@ -6,6 +6,8 @@
 set -e
 
 source $(dirname "$0")/../includes/bash-common.inc.sh
+envdirname=mnd-env
+
 
 showHelp() {
 cat << EOF
@@ -13,7 +15,7 @@ Usage: ./mnddev2-dw-env command
 
 Available commands:
 init                will create a multiple environment folder and file structure.
-                    This will create a "env" folder in your root project where you can then create
+                    This will create a "$envdirname" folder in your root project where you can then create
                     subfolders named after each environment (eg. staging, dev, test, etc..)
                     In these folders you can copy files that will be copied to the root folder once
                     the environment was activated.
@@ -28,7 +30,7 @@ initEnv() {
 
 cat << EOF
 *** WARNING ***
-If you continue, a new folder called "env" will be created in your project.
+If you continue, a new folder called "$envdirname" will be created in your project.
 This directory should be created in the ROOT folder of your project, eg: root folder of shopware.
 If you are not in the correct folder, you should stop now. Otherwise continue.
 
@@ -42,12 +44,12 @@ fi
 
 #copy all stuff from templates to the current directory
 #echo "The script you are running has basename $( basename -- "$0"; ), dirname $( dirname -- "$0"; )";
-template_dir=$( dirname -- "$0" )/../templates/env
+template_dir=$( dirname -- "$0" )/../templates/$envdirname
 
 #check if env directory lready exists:
 
-if [ -d env ]; then
-    echo "ERROR: env directory already exists"
+if [ -d $envdirname ]; then
+    echo "ERROR: $envdirname directory already exists"
     exit 4;
 fi
 
@@ -58,10 +60,10 @@ fi
 
 
 cp $template_dir . -rf
-mkdir -p env/dev/files
+mkdir -p $envdirname/dev/files
 
 echo "Done!"
-echo "Next: You should now copy all needed files for each environments in the corresponding env/<envname>/files directory."
+echo "Next: You should now copy all needed files for each environments in the corresponding $envdirname/<envname>/files directory."
 echo "For example .env or config.php files. You can also copy files from sub folders."
 
 }
